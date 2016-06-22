@@ -8,10 +8,10 @@ class NotesTests(UITestCase):
         launch.activity('com.nononsenseapps.notepad', '.activities.ActivityList')
         
         global taskListName
-        taskListName = 'a random task list'
+        taskListName = "a random task list"
         
         global noteName1 
-        noteName1 = 'prepare food'
+        noteName1 = "prepare food"
         
         global noteName2
         noteName2 = "take dogs out"
@@ -177,7 +177,8 @@ class NotesTests(UITestCase):
             
         """
         
-        
+        # initialize the strings that are used with content descriptions
+        # could maybe use regexes for those too but this works
         currentMonthAndYear = \
         " " +  time.strftime("%B") + " " + time.strftime("%Y")
         firstDate = "04" + currentMonthAndYear
@@ -219,6 +220,33 @@ class NotesTests(UITestCase):
         #order the notes
         tap.resourceId('com.nononsenseapps.notepad:id/menu_sort')
         tap.text('Order by due date')
+        
+        note2_right_place = find.text(noteName2, index=0)
+        note1_right_place = find.text(noteName1, index=1)
+        note4_right_place = find.text(noteName4, index=2)
+        note3_right_place = find.text(noteName3, index=3)
+        
+        
+        """
+        this doesnt actually work like this.
+        we are with the note names and every time we search
+        for a note it has an index of 0 since its the first of
+        that kind of element that is found. we need to search
+        with maybe the ID of the elements and check that the found
+        elements are then in order, 
+        """
+        if not note1_right_place:
+            fail("first note in wrong place")
+            
+        if not note2_right_place:
+            fail("second note in wrong place")
+            
+        if not note3_right_place:
+            fail("third note in wrong place")
+            
+        if not note4_right_place:
+            fail("fourth note in wrong place")
+        
         
     
     def createNoteWithName(self, noteName):
