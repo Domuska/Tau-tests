@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 class NotesTests(UITestCase):
     
+    
     def setUp(self):
+        #launch.app('com.nononsenseapps.notepad/.activities.ActivityList')
         launch.activity('com.nononsenseapps.notepad', '.activities.ActivityList')
         
-        #launch.app('com.android.settings'
-        #launch.app('com.android.chrome')
+        global taskListName
+        taskListName = 'a random task list'
+        
+        global noteName1 
+        noteName1 = 'prepare food'
+        
         
     def tearDown(self):
         kill('com.nononsenseapps.notepad')
@@ -53,5 +59,23 @@ class NotesTests(UITestCase):
         tap.description('Open navigation drawer')
         verify.text('a random tasklist', scroll=True)
         
+    @testCaseInfo('<Add note to tasklist>', deviceCount=1)
+    def testAddNoteToTaskList(self):
+        """
+            1. do stuff
+        """
+        
+        
+        tap.text('Create new')
+        tap.text('Title')
+        input.text(taskListName)
+        tap.text('OK')
+        tap.description('Open navigation drawer')
+        tap.text(taskListName)
+        tap.description('Floating action button')
+        tap.text('Note')
+        input.text(noteName1)
+        tap.description('Navigate up')
+        verify.text(noteName1, scroll=True)
         
         
