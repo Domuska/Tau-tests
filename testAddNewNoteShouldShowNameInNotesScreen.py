@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 class NotesTests(UITestCase):
     
     
@@ -13,9 +14,9 @@ class NotesTests(UITestCase):
         noteName1 = 'prepare food'
         
         
-    def tearDown(self):
-        kill('com.nononsenseapps.notepad')
-        packages.clearData('com.nononsenseapps.notepad')
+    #def tearDown(self):
+        #kill('com.nononsenseapps.notepad')
+        #packages.clearData('com.nononsenseapps.notepad')
         
         
 
@@ -55,7 +56,6 @@ class NotesTests(UITestCase):
         tap.text('Create new')
         input.text('a random tasklist')
         tap.text('OK')
-        exists.toast('Saved') # sender = 'com.nononsenseapps.notepad'
         tap.description('Open navigation drawer')
         verify.text('a random tasklist', scroll=True)
         
@@ -64,18 +64,67 @@ class NotesTests(UITestCase):
         """
             1. do stuff
         """
-        
-        
         tap.text('Create new')
-        tap.text('Title')
+        tap.resourceId('com.nononsenseapps.notepad:id/titleField')
         input.text(taskListName)
-        tap.text('OK')
+        tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
+        
         tap.description('Open navigation drawer')
         tap.text(taskListName)
-        tap.description('Floating action button')
-        tap.text('Note')
-        input.text(noteName1)
-        tap.description('Navigate up')
+        self.createNoteWithName(noteName1)
+        self.navigateUp()
+        #tap.description('Floating action button')
+        #tap.text('Note')
+        #input.text(noteName1)
+        #tap.description('Navigate up')
         verify.text(noteName1, scroll=True)
+        self.openDrawer()
+        verify.text('1', scroll=True)
+        
+    @testCaseInfo('<Add note and add reminder date>', deviceCount=1)
+    def testAddNewNoteWithReminderDateAndTime(self):
+        """
+            1. add new note
+            2. add reminder date and time
+            3. open note and verify the date is visible        
+        """
+        #swipe.location((0.09, 0.1)).to.location((0.07, 0.1))
+        #swipe.location((0.09, 0.1)).to.location((0.07, 0.1))
+        #swipe.description('List of tasks').to.location((0, 0.47))
+        self.closeDrawer()
+        
+        self.createNoteWithName(noteName1)
+        
+        tap.resourceId("com.nononsenseapps.notepad:id/notificationAdd")
+        
+        #add date
+        tap.resourceId("com.nononsenseapps.notepad:id/notificationDate")
+        tap.resourceId("com.nononsenseapps.notepad:id/done")
+        
+        #add time
+        tap.resourceId("com.nononsenseapps.notepad:id/notificationTime")
+        tap.resourceId("com.nononsenseapps.notepad:id/done_button")
+        
+        self.navigateUp()
+        
+        tap.text(noteName1)
+        
+        #verify current month and date
+        exists.resourceId('com.nononsenseapps.notepad:id/notificationDate', scroll=True)
+        #verify.text('June 22', scroll=True)
+        
+    def createNoteWithName(self, noteName):
+        tap.resourceId("com.nononsenseapps.notepad:id/fab")
+        tap.resourceId("com.nononsenseapps.notepad:id/taskText")
+        input.text(noteName)
+        
+    def closeDrawer(self):
+        swipe.description('List of tasks').to.location((0, 0.5))
+    
+    def openDrawer(self):
+        tap.description('Open navigation drawer')
+        
+    def navigateUp(self):
+        tap.description('Navigate up')
         
         
