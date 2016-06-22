@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import time
 class NotesTests(UITestCase):
     
     
@@ -12,6 +12,16 @@ class NotesTests(UITestCase):
         
         global noteName1 
         noteName1 = 'prepare food'
+        
+        global noteName2
+        noteName2 = "take dogs out"
+        
+        global noteName3
+        noteName3 = "water plants"
+        
+        global noteName4
+        noteName4 = "sleep"
+        
         
         
     #def tearDown(self):
@@ -109,10 +119,108 @@ class NotesTests(UITestCase):
         
         tap.text(noteName1)
         
-        #verify current month and date
-        exists.resourceId('com.nononsenseapps.notepad:id/notificationDate', scroll=True)
-        #verify.text('June 22', scroll=True)
+        #verify month is shown
+        found = find.resourceId('com.nononsenseapps.notepad:id/notificationDate', scroll=True)
         
+        if not found:
+            fail("month is not visible even though reminder was added")
+        
+    @testCaseInfo('<Add note with due date>', deviceCount=1)
+    def testAddNewNoteWithDueDateCheckDateIsVisible(self):
+        """
+            1. add new note
+            2. check that due date is visible in list
+        """
+        self.closeDrawer()
+        
+        self.createNoteWithName(noteName1)
+        tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
+        tap.resourceId('com.nononsenseapps.notepad:id/done')
+        
+        self.navigateUp()
+        
+        
+        found = find.resourceId('com.nononsenseapps.notepad:id/date', scroll=True)
+        
+        if not found:
+            fail("due date is not visible!")
+
+        
+    @testCaseInfo('<Add note and delete it>', deviceCount=1)
+    def testCreateNoteAndDeleteIt(self):
+        """
+            1. add new note
+            2. delete it
+            3. verify it's not in the list any more
+        """
+        
+        self.closeDrawer()
+        self.createNoteWithName(noteName1)
+        self.navigateUp()
+        tap.text(noteName1)
+        
+        tap.resourceId('com.nononsenseapps.notepad:id/menu_delete')
+        tap.resourceId('android:id/button1')
+        
+        found = find.text(noteName1, index=1, scroll=True)
+        
+        if found:
+            fail("note found, was not deleted properly!")
+        
+        
+    @testCaseInfo('<Add notes and order by due date>', deviceCount=1)
+    def testAddNotesOrderByDueDate(self):
+        """
+            1. add notes with due dates
+            2. sort by due date
+            3. check that notes sorted correctly
+            
+        """
+        
+        
+        currentMonthAndYear = \
+        " " +  time.strftime("%B") + " " + time.strftime("%Y")
+        firstDate = "04" + currentMonthAndYear
+        secondDate = "05" + currentMonthAndYear
+        thirdDate = "15" + currentMonthAndYear
+        fourthDate = "23" + currentMonthAndYear
+        
+        
+        self.closeDrawer()
+        
+        # create first note
+        self.createNoteWithName(noteName1)
+        tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
+        tap.description(secondDate)
+        tap.resourceId('com.nononsenseapps.notepad:id/done')
+        self.navigateUp()
+        
+        #create second note
+        self.createNoteWithName(noteName2)
+        tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
+        tap.description(firstDate)
+        tap.resourceId('com.nononsenseapps.notepad:id/done')
+        self.navigateUp()
+        
+        #third note
+        self.createNoteWithName(noteName3)
+        tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
+        tap.description(fourthDate)
+        tap.resourceId('com.nononsenseapps.notepad:id/done')
+        self.navigateUp()
+        
+        #fourth note
+        self.createNoteWithName(noteName4)
+        tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
+        tap.description(thirdDate)
+        tap.resourceId('com.nononsenseapps.notepad:id/done')
+        self.navigateUp()
+        
+        #order the notes
+        tap.resourceId('com.nononsenseapps.notepad:id/menu_sort')
+        tap.text('Order by due date')
+        
+    
     def createNoteWithName(self, noteName):
         tap.resourceId("com.nononsenseapps.notepad:id/fab")
         tap.resourceId("com.nononsenseapps.notepad:id/taskText")
