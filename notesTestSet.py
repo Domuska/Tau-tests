@@ -46,20 +46,17 @@ class NotesTests(UITestCase):
         """ Insert brief description of the test case
 
             1. Close the navigation drawer
-            2. Tap on the fab
-            3. Enter the name for the note and close the note
-            4. Verify that the note is in the list
+            2. Add a new note
+            3. Verify that the note is in the list
            
         """
-        # goto('Notes')
         log('Step1: Insert test step description')
-        #tap.description('Apps')
-        #tap.description('Notes')
-        swipe.description('List of tasks').to.location((0, 0.5))
-        tap.description('Floating action button')
-        tap.text('Note')
-        input.text('prepare food')
-        tap.description('Navigate up')
+        self.closeDrawer()
+        
+        self.createNoteWithName(noteName1)
+        
+        self.navigateUp()
+        
         verify.text('prepare food', scroll=True)
         
 
@@ -68,36 +65,25 @@ class NotesTests(UITestCase):
         """
             1. do stuff
         """
-        #goto('Notes')
-        #tap.description('Apps')
-        #tap.description('Notes')
-        #tap.description('List of tasks')
-        #tap.description('Apps')
-        #tap.description('Notes')
-        tap.text('Create new')
-        input.text('a random tasklist')
-        tap.text('OK')
-        tap.description('Open navigation drawer')
-        verify.text('a random tasklist', scroll=True)
+        self.createTaskList(taskListName)
+        
+        self.openDrawer()
+        
+        verify.text(taskListname, scroll=True)
         
     @testCaseInfo('<Add note to tasklist>', deviceCount=1)
     def testAddNoteToTaskList(self):
         """
             1. do stuff
         """
-        tap.text('Create new')
-        tap.resourceId('com.nononsenseapps.notepad:id/titleField')
-        input.text(taskListName)
-        tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
+        self.createTaskList(taskListName)
         
         tap.description('Open navigation drawer')
         tap.text(taskListName)
+        
         self.createNoteWithName(noteName1)
         self.navigateUp()
-        #tap.description('Floating action button')
-        #tap.text('Note')
-        #input.text(noteName1)
-        #tap.description('Navigate up')
+
         verify.text(noteName1, scroll=True)
         self.openDrawer()
         verify.text('1', scroll=True)
@@ -109,9 +95,7 @@ class NotesTests(UITestCase):
             2. add reminder date and time
             3. open note and verify the date is visible        
         """
-        #swipe.location((0.09, 0.1)).to.location((0.07, 0.1))
-        #swipe.location((0.09, 0.1)).to.location((0.07, 0.1))
-        #swipe.description('List of tasks').to.location((0, 0.47))
+
         self.closeDrawer()
         
         self.createNoteWithName(noteName1)
@@ -378,15 +362,31 @@ class NotesTests(UITestCase):
         self.closeDrawer()
         self.createNotes(noteNamesList)
         tap.text(noteNamesList[0])
+       
         
+    @testCaseInfo('<Add task lists and scroll down to open settings>', deviceCount=1)
+    def testAddTaskListsScrollNavigationDrawer(self):
+        """
+            1. Add new task lists
+            2. scroll down to settings
+            3. assert that settings was opened
+        """
         
-        # testy things, not to be left here in the end
-        #tap.text("Settings")
-        #self.openDrawer()
-        #item = swipe.text("All lists")
-        #item.up(distance=2.0)
+        taskListNames= ["Lorem", "ipsum ", "dolor ", "sit ", "amet", "consectetur ",\
+        "adipiscing ", "elit", "sed ", "do ", "eiusmod ", "tempor ", "incididunt ",\
+        "ut ", "labore "]
         
+        for name in taskListNames:
+            self.createTaskList(name)
+            self.openDrawer()
         
+        #open settings, define that it is searched in the nav drawer
+        tap.text("Settings", area="com.nononsenseapps.notepad:id/navigation_drawer")
+        
+        settingsOpened = exists.text("Settings")
+        
+        if not settingsOpened:
+            fail("settings was not launched")
         
     
     def createNoteWithName(self, noteName):
@@ -399,8 +399,16 @@ class NotesTests(UITestCase):
         for name in noteNames:
             self.createNoteWithName(name)
             self.navigateUp()
-            
+    
+    
+    def createTaskList(self, name):
+        #tap in the nav drawer
+        tap.text('Create new', area='com.nononsenseapps.notepad:id/navigation_drawer')
+        tap.resourceId('com.nononsenseapps.notepad:id/titleField')
+        input.text(name)
+        tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
         
+    
     def closeDrawer(self):
         swipe.description('List of tasks').to.location((0, 0.5))
     
