@@ -269,19 +269,68 @@ class NotesTests(UITestCase):
         tap.text('OK')
         
         #assert it is not visible
-        textViews = get.items.instanceOf('android.widget.TextView', \
-            resourceId='android:id/text1')
-            
-        for item in textViews:
-            log(item)
-            if item.Text == taskListName:
-                fail("task list is still in the list")
+        exists.no.text(taskListName)
+                
+    @testCaseInfo('<Clear done tasks>', deviceCount=1)
+    def testCompletedTasksAreCleared(self):
+        """
+            1. add notes
+            2. check checkboxes
+            3. clear done tasks
+            4. assert that correct notes are removed from list
+        """
+        
+        noteNames = [noteName1, noteName2, noteName3, noteName4]
+        
+        self.closeDrawer()
+        self.createNotes(noteNames)
+        
+        # get checkboxes, note that this way is not very generalizable 
+        # if the checkbox for example was not visible, this method would
+        # not work but we would have to manually scroll the checkbox
+        # into view somehow
+        checkBoxes = get.items.instanceOf('android.widget.CheckBox')
+        
+        tap.item(checkBoxes[1])
+        tap.item(checkBoxes[3])
+        
+        #remove notes
+        tap.description('More options')
+        tap.text('Clear completed')
+        tap.text('OK')
+        
+        exists.no.text(noteNames[0])
+        exists.no.text(noteNames[2])
+        
+    @testCaseInfo('<Rotate screen in task list>', deviceCount=1)
+    def testAddTaskListAndRotateScreen(self):
+        """
+            1. add a new task list
+            2. rotate screen twice
+            3. make sure the task list is still visible
+        """
+        
+        #create the task list
+        tap.text('Create new')
+        tap.resourceId('com.nononsenseapps.notepad:id/titleField')
+        input.text(taskListName)
+        tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
+        
+        #rotate screen
+        
         
     
     def createNoteWithName(self, noteName):
         tap.resourceId("com.nononsenseapps.notepad:id/fab")
         tap.resourceId("com.nononsenseapps.notepad:id/taskText")
         input.text(noteName)
+        
+    
+    def createNotes(self, noteNames):
+        for name in noteNames:
+            self.createNoteWithName(name)
+            self.navigateUp()
+            
         
     def closeDrawer(self):
         swipe.description('List of tasks').to.location((0, 0.5))
