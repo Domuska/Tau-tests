@@ -316,8 +316,46 @@ class NotesTests(UITestCase):
         input.text(taskListName)
         tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
         
+        self.openDrawer()
+        
         #rotate screen
         orientation.left()
+        orientation.natural()
+        orientation.free()
+        
+        
+        taskListFound = exists.text(taskListName)
+        
+        if not taskListFound:
+            fail("task list was not found")
+        
+        
+    @testCaseInfo('<Rotate screen in task list>', deviceCount=1)
+    def testAddNotesAndRotateScreen(self):
+        """
+            1. add notes to the list
+            2. rotate the screen 
+            3. assert that notes are still visible
+        """
+        
+        noteNames = [noteName1, noteName2, noteName3, noteName4]
+        
+        self.closeDrawer()
+        self.createNotes(noteNames)
+        
+        #rotate screen
+        orientation.left()
+        orientation.natural()
+        orientation.free()
+        
+        firstNoteFound = exists.text(noteNames[0])
+        secondNoteFound = exists.text(noteNames[1])
+        thirdNoteFound = exists.text(noteNames[2])
+        fourthNoteFound = exists.text(noteNames[3])
+        
+        if not firstNoteFound or not secondNoteFound \
+        or not thirdNoteFound or not fourthNoteFound:
+            fail("all notes were not visible in the list")
         
         
     
