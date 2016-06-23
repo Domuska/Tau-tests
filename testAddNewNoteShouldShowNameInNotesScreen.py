@@ -317,6 +317,7 @@ class NotesTests(UITestCase):
         tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
         
         #rotate screen
+        orientation.left()
         
         
     
