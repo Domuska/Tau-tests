@@ -6,8 +6,8 @@ class NotesTests(UITestCase):
     def setUp(self):
         #launch.app('com.nononsenseapps.notepad/.activities.ActivityList')
         #launch.activity('com.nononsenseapps.notepad', '.activities.ActivityList')
-        #launch.activity('com.nononsenseapps.notepad',\
-        #'.activities.ActivityList', wait=5)
+        launch.activity('com.nononsenseapps.notepad',\
+        '.activities.ActivityList', wait=5)
         
         global taskListName
         taskListName = "a random task list"
@@ -35,9 +35,9 @@ class NotesTests(UITestCase):
         
         
         
-    #def tearDown(self):
-        #kill('com.nononsenseapps.notepad')
-        #packages.clearData('com.nononsenseapps.notepad')
+    def tearDown(self):
+        kill('com.nononsenseapps.notepad')
+        packages.clearData('com.nononsenseapps.notepad')
         
         
 
