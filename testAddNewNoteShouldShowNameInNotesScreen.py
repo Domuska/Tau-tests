@@ -177,14 +177,18 @@ class NotesTests(UITestCase):
             
         """
         
+        
         # initialize the strings that are used with content descriptions
         # could maybe use regexes for those too but this works
         currentMonthAndYear = \
         " " +  time.strftime("%B") + " " + time.strftime("%Y")
-        firstDate = "04" + currentMonthAndYear
-        secondDate = "05" + currentMonthAndYear
-        thirdDate = "15" + currentMonthAndYear
-        fourthDate = "23" + currentMonthAndYear
+        date_fourth = "04" + currentMonthAndYear
+        date_fifth = "05" + currentMonthAndYear
+        date_fifteenth = "15" + currentMonthAndYear
+        date_twentythird = "23" + currentMonthAndYear
+        
+        #initialize the notes in right order
+        notes_correct_order = [noteName2, noteName1, noteName4, noteName3]
         
         
         self.closeDrawer()
@@ -192,28 +196,28 @@ class NotesTests(UITestCase):
         # create first note
         self.createNoteWithName(noteName1)
         tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
-        tap.description(secondDate)
+        tap.description(date_fifth)
         tap.resourceId('com.nononsenseapps.notepad:id/done')
         self.navigateUp()
         
         #create second note
         self.createNoteWithName(noteName2)
         tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
-        tap.description(firstDate)
+        tap.description(date_fourth)
         tap.resourceId('com.nononsenseapps.notepad:id/done')
         self.navigateUp()
         
         #third note
         self.createNoteWithName(noteName3)
         tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
-        tap.description(fourthDate)
+        tap.description(date_twentythird)
         tap.resourceId('com.nononsenseapps.notepad:id/done')
         self.navigateUp()
         
         #fourth note
         self.createNoteWithName(noteName4)
         tap.resourceId('com.nononsenseapps.notepad:id/dueDateBox')
-        tap.description(thirdDate)
+        tap.description(date_fifteenth)
         tap.resourceId('com.nononsenseapps.notepad:id/done')
         self.navigateUp()
         
@@ -227,26 +231,51 @@ class NotesTests(UITestCase):
         note3_right_place = find.text(noteName3, index=3)
         
         
-        """
-        this doesnt actually work like this.
-        we are with the note names and every time we search
-        for a note it has an index of 0 since its the first of
-        that kind of element that is found. we need to search
-        with maybe the ID of the elements and check that the found
-        elements are then in order, 
-        """
-        if not note1_right_place:
-            fail("first note in wrong place")
-            
-        if not note2_right_place:
-            fail("second note in wrong place")
-            
-        if not note3_right_place:
-            fail("third note in wrong place")
-            
-        if not note4_right_place:
-            fail("fourth note in wrong place")
+        notes = get.items.instanceOf('android.widget.TextView', \
+        description='Item title')
+        note_names = []
         
+        #get actual note names
+        for note in notes:
+            note_names.append(note.Text)
+        
+        #check that notes are in right order
+        if not (notes_correct_order == note_names):
+            log("correct order of notes:")
+            log(notes_correct_order)
+            log("order gotten:")
+            log(note_names)
+            fail("notes in wrong order")
+            
+            
+    @testCaseInfo('<Add a new task list and delete it>', deviceCount=1)
+    def testCreateTaskListAndDeleteIt(self):
+        """
+            1. create new task list
+            2. delete it
+            3. assert that the task list is not visible
+        """
+        
+        #create the task list
+        tap.text('Create new')
+        tap.resourceId('com.nononsenseapps.notepad:id/titleField')
+        input.text(taskListName)
+        tap.resourceId('com.nononsenseapps.notepad:id/dialog_yes')
+        
+        #delete the task list
+        tap.description('Open navigation drawer')
+        tap.long.text(taskListName)
+        tap.resourceId('com.nononsenseapps.notepad:id/deleteButton')
+        tap.text('OK')
+        
+        #assert it is not visible
+        textViews = get.items.instanceOf('android.widget.TextView', \
+            resourceId='android:id/text1')
+            
+        for item in textViews:
+            log(item)
+            if item.Text == taskListName:
+                fail("task list is still in the list")
         
     
     def createNoteWithName(self, noteName):
