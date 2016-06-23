@@ -5,7 +5,9 @@ class NotesTests(UITestCase):
     
     def setUp(self):
         #launch.app('com.nononsenseapps.notepad/.activities.ActivityList')
-        launch.activity('com.nononsenseapps.notepad', '.activities.ActivityList')
+        #launch.activity('com.nononsenseapps.notepad', '.activities.ActivityList')
+        #launch.activity('com.nononsenseapps.notepad',\
+        #'.activities.ActivityList', wait=5)
         
         global taskListName
         taskListName = "a random task list"
@@ -21,6 +23,15 @@ class NotesTests(UITestCase):
         
         global noteName4
         noteName4 = "sleep"
+        
+        global noteNamesList
+        noteNamesList = ["prepare food", "take dogs out", "water plants", "sleep",
+                "go for a jog", "do some work", "play with the dog",
+                "work out", "do weird stuff", "read a book", "drink water",
+                "write a book", "proofread the book", "publish the book",
+                "ponder life", "build a house", "repair the house", "call contractor",
+                "write another book", "scrap the book project", "start a blog",
+                "  ", "     "]
         
         
         
@@ -320,8 +331,8 @@ class NotesTests(UITestCase):
         
         #rotate screen
         orientation.left()
-        orientation.natural()
-        orientation.free()
+        orientation.portrait()
+        
         
         
         taskListFound = exists.text(taskListName)
@@ -345,8 +356,8 @@ class NotesTests(UITestCase):
         
         #rotate screen
         orientation.left()
-        orientation.natural()
-        orientation.free()
+        orientation.portrait()
+        
         
         firstNoteFound = exists.text(noteNames[0])
         secondNoteFound = exists.text(noteNames[1])
@@ -356,6 +367,25 @@ class NotesTests(UITestCase):
         if not firstNoteFound or not secondNoteFound \
         or not thirdNoteFound or not fourthNoteFound:
             fail("all notes were not visible in the list")
+        
+    @testCaseInfo('<Add notes and scroll down to open one>', deviceCount=1)
+    def testAddBigNumberOfNotesScrollDownAndDeleteOne(self):
+        """
+            1. add a big number of notes
+            2. scroll down to last one and open it
+            3. assert that the last note was opened
+        """
+        self.closeDrawer()
+        self.createNotes(noteNamesList)
+        tap.text(noteNamesList[0])
+        
+        
+        # testy things, not to be left here in the end
+        #tap.text("Settings")
+        #self.openDrawer()
+        #item = swipe.text("All lists")
+        #item.up(distance=2.0)
+        
         
         
     
