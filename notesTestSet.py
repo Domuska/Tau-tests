@@ -389,6 +389,7 @@ class NotesTests(UITestCase):
             fail("settings was not launched")
         
     
+    
     def createNoteWithName(self, noteName):
         tap.resourceId("com.nononsenseapps.notepad:id/fab")
         tap.resourceId("com.nononsenseapps.notepad:id/taskText")
